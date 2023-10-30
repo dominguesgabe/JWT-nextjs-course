@@ -1,3 +1,4 @@
+// adapter
 export async function httpClient(fetchUrl, fetchOptions) {
   const options = {
     ...fetchOptions,

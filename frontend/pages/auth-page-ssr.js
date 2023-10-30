@@ -1,3 +1,5 @@
+import { withSession } from "../src/services/auth/session";
+
 export default function AuthPageSSR(props) {
   return (
     <>
@@ -6,3 +8,12 @@ export default function AuthPageSSR(props) {
     </>
   );
 }
+
+// withSession ia a decorator
+export const getServerSideProps = withSession((ctx) => {
+  return {
+    props: {
+      session: ctx.req.session,
+    },
+  };
+});
