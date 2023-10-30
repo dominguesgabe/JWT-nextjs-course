@@ -17,7 +17,7 @@ async function login({ username, password }) {
   });
 }
 
-async function getSession(ctx) {
+async function getSession(ctx = null) {
   const token = tokenService.getToken(ctx);
 
   const options = {
