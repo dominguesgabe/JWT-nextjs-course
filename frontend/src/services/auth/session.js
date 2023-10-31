@@ -32,13 +32,20 @@ export function useSession() {
   const [error, setError] = useState(false);
 
   useEffect(async () => {
-    try {
-      const userSession = await authService.getSession();
-      setSession(userSession);
-    } catch (error) {
-      setError(error);
-    }
-    setLoading(false);
+    // try {
+    authService
+      .getSession()
+      .then((data) => {
+        setSession(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("aaaaaa");
+        setError(error);
+        setLoading(false);
+      });
+    // } catch (error) {
+    // }
   }, []);
 
   return {

@@ -33,7 +33,7 @@ export default function HomeScreen() {
         // router.push("/auth-page-ssr");
         router.push("/auth-page-static");
       })
-      .catch(() => {
+      .catch((e) => {
         alert("Nao foi possível logar, confira seus dados.");
       });
   }
