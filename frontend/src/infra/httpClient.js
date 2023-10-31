@@ -2,14 +2,15 @@ import nookies from "nookies";
 import { tokenService } from "../services/auth/tokenService";
 
 // adapter
-export async function httpClient(fetchUrl, fetchOptions) {
+export async function httpClient(fetchUrl, fetchOptions = {}) {
   const REFRESH_TOKEN_NAME = "REFRESH_TOKEN_NAME";
+  const defaultHeaders = fetchOptions.headers || {};
 
   const options = {
     ...fetchOptions,
     headers: {
       "Content-Type": "application/json",
-      ...fetchOptions.headers,
+      ...defaultHeaders,
     },
     body: fetchOptions.body ? JSON.stringify(fetchOptions.body) : null,
   };
@@ -39,7 +40,7 @@ export async function httpClient(fetchUrl, fetchOptions) {
             body: isServer ? { refresh_token: currentRefreshToken } : undefined,
           }
         );
-        console.log(refreshResponse);
+
         //save new tokens
         const newAccessToken = refreshResponse.body.data.access_token;
         const newRefreshToken = refreshResponse.body.data.refresh_token;

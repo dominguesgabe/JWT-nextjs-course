@@ -4,7 +4,6 @@ import { authService } from "../../src/services/authService";
 const controllers = {
   async refreshTokens(req, res) {
     const { refresh_token } = req.body;
-    console.log(refresh_token);
 
     try {
       const { sub } = await authService.validateRefreshToken(refresh_token);

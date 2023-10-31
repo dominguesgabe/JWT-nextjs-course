@@ -5,6 +5,9 @@ function AuthPageStatic(props) {
     <>
       <h1>Auth page static</h1>
       <pre>{JSON.stringify(props, null, 2)}</pre>
+      <p>
+        <a href="/logout">Sair</a>
+      </p>
     </>
   );
 }
