@@ -34,7 +34,7 @@ const controllers = {
     const context = { req, res };
 
     const cookies = nookies.get(context);
-    const refresh_token = cookies[REFRESH_TOKEN_NAME];
+    const refresh_token = cookies[REFRESH_TOKEN_NAME] || req.body.refresh_token;
 
     const options = { method: "POST", body: { refresh_token } };
 
@@ -71,6 +71,7 @@ const controllerBy = {
   // GET: controllers.displayCookies,
   GET: controllers.regenerateTokens,
   POST: controllers.storeRefreshToken,
+  PUT: controllers.regenerateTokens,
 };
 
 export default function handler(request, response) {

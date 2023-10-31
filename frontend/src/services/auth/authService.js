@@ -35,6 +35,7 @@ async function getSession(ctx = null) {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    ctx,
     refresh: true,
   };
 

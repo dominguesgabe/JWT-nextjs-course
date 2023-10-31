@@ -40,7 +40,6 @@ export function useSession() {
         setLoading(false);
       })
       .catch((error) => {
-        console.log("aaaaaa");
         setError(error);
         setLoading(false);
       });

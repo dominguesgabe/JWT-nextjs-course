@@ -1,7 +1,10 @@
+import nookies from "nookies";
 import { tokenService } from "../services/auth/tokenService";
 
 // adapter
 export async function httpClient(fetchUrl, fetchOptions) {
+  const REFRESH_TOKEN_NAME = "REFRESH_TOKEN_NAME";
+
   const options = {
     ...fetchOptions,
     headers: {
@@ -23,26 +26,45 @@ export async function httpClient(fetchUrl, fetchOptions) {
       if (!fetchOptions.refresh) return response;
       if (response.status !== 401) return response;
 
-      //update tokens
-      const refreshResponse = await httpClient(
-        "http://localhost:3000/api/refresh",
-        { method: "GET" }
-      );
+      const isServer = Boolean(fetchOptions?.ctx);
+      const currentRefreshToken =
+        fetchOptions?.ctx?.req?.cookies[REFRESH_TOKEN_NAME];
 
-      //save new tokens
-      const newAccessToken = refreshResponse.body.data.access_token;
-      const newRefreshToken = refreshResponse.body.data.refresh_token;
-      tokenService.saveToken(newAccessToken);
+      try {
+        //update tokens
+        const refreshResponse = await httpClient(
+          "http://localhost:3000/api/refresh",
+          {
+            method: isServer ? "PUT" : "GET",
+            body: isServer ? { refresh_token: currentRefreshToken } : undefined,
+          }
+        );
+        console.log(refreshResponse);
+        //save new tokens
+        const newAccessToken = refreshResponse.body.data.access_token;
+        const newRefreshToken = refreshResponse.body.data.refresh_token;
+        tokenService.saveToken(newAccessToken);
 
-      //try login with new tokens
-      const retryResponse = await httpClient(fetchUrl, {
-        ...options,
-        refresh: false,
-        headers: {
-          Authorization: `Bearer ${newAccessToken}`,
-        },
-      });
+        if (isServer) {
+          nookies.set(options.ctx, REFRESH_TOKEN_NAME, newRefreshToken, {
+            httpOnly: true,
+            sameSite: "lax",
+            path: "/",
+          });
+        }
+        //try login with new tokens
+        const retryResponse = await httpClient(fetchUrl, {
+          ...options,
+          refresh: false,
+          headers: {
+            Authorization: `Bearer ${newAccessToken}`,
+          },
+        });
 
-      return retryResponse;
+        return retryResponse;
+      } catch (error) {
+        console.log(error);
+        return response;
+      }
     });
 }
